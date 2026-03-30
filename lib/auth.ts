@@ -83,7 +83,11 @@ export async function getCurrentUser() {
   return result.rows[0]
 }
 
-// Get session with user data - used by protected pages
+/**
+ * Get session with user data
+ * Used by protected pages and API routes to verify authentication
+ * @returns Session object with user data or null if not authenticated
+ */
 export async function getSession(): Promise<{ user: Awaited<ReturnType<typeof getCurrentUser>> } | null> {
   const user = await getCurrentUser()
   if (!user) {
