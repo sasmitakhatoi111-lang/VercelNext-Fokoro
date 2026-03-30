@@ -44,7 +44,7 @@ async function getUserQuestions(userId: number) {
     FROM questions q
     JOIN users u ON q.author_id = u.id
     LEFT JOIN topics t ON q.topic_id = t.id
-    LEFT JOIN question_tags qt ON q.question_id = qt.question_id
+    LEFT JOIN question_tags qt ON q.id = qt.question_id
     LEFT JOIN tags tg ON qt.tag_id = tg.id
     WHERE q.author_id = $1
     GROUP BY q.id, u.id, t.id

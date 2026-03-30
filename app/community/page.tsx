@@ -11,7 +11,7 @@ import { formatNumber } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Community',
-  description: 'Explore the Fokoro community - discover trending questions, top users, and active discussions',
+  description: 'Explore the Fokoro community - discover trending questions, top users, and active discussions.',
 }
 
 interface Props {

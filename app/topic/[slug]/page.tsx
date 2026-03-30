@@ -19,7 +19,8 @@ interface Props {
 async function getTopic(slug: string) {
   const result = await query(
     `SELECT id, name, slug, description, icon, question_count, follower_count, is_featured, created_at
-     FROM topics WHERE slug = $1`,
+     FROM topics 
+     WHERE slug = $1`,
     [slug]
   )
   return result.rows[0] || null
@@ -50,7 +51,7 @@ async function getTopicQuestions(topicId: number, sort: string) {
     FROM questions q
     JOIN users u ON q.author_id = u.id
     LEFT JOIN topics t ON q.topic_id = t.id
-    LEFT JOIN question_tags qt ON q.question_id = qt.question_id
+    LEFT JOIN question_tags qt ON q.id = qt.question_id
     LEFT JOIN tags tg ON qt.tag_id = tg.id
     WHERE q.topic_id = $1 ${whereClause}
     GROUP BY q.id, u.id, t.id
