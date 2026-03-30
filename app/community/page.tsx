@@ -11,7 +11,7 @@ import { formatNumber } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Community',
-  description: 'Explore the Fokoro community - trending questions, top users, and active discussions',
+  description: 'Explore the Fokoro community - discover trending questions, top users, and active discussions',
 }
 
 interface Props {
@@ -34,7 +34,7 @@ async function getForYouQuestions() {
     FROM questions q
     JOIN users u ON q.author_id = u.id
     LEFT JOIN topics t ON q.topic_id = t.id
-    LEFT JOIN question_tags qt ON q.question_id = qt.question_id
+    LEFT JOIN question_tags qt ON q.id = qt.question_id
     LEFT JOIN tags tg ON qt.tag_id = tg.id
     GROUP BY q.id, u.id, t.id
     ORDER BY (q.upvotes - q.downvotes) * 0.5 + q.view_count * 0.3 + q.answer_count * 0.2 DESC,
@@ -60,7 +60,7 @@ async function getTrendingQuestions() {
     FROM questions q
     JOIN users u ON q.author_id = u.id
     LEFT JOIN topics t ON q.topic_id = t.id
-    LEFT JOIN question_tags qt ON q.question_id = qt.question_id
+    LEFT JOIN question_tags qt ON q.id = qt.question_id
     LEFT JOIN tags tg ON qt.tag_id = tg.id
     WHERE q.created_at > NOW() - INTERVAL '7 days'
     GROUP BY q.id, u.id, t.id
@@ -87,7 +87,7 @@ async function getFollowingQuestions() {
     FROM questions q
     JOIN users u ON q.author_id = u.id
     LEFT JOIN topics t ON q.topic_id = t.id
-    LEFT JOIN question_tags qt ON q.question_id = qt.question_id
+    LEFT JOIN question_tags qt ON q.id = qt.question_id
     LEFT JOIN tags tg ON qt.tag_id = tg.id
     GROUP BY q.id, u.id, t.id
     ORDER BY q.created_at DESC

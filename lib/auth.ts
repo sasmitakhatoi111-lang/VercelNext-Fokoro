@@ -3,7 +3,8 @@ import { query } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 
-const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000 // 30 days
+// Session duration: 30 days in milliseconds
+const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12)
