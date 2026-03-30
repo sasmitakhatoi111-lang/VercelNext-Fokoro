@@ -81,3 +81,12 @@ export async function getCurrentUser() {
 
   return result.rows[0]
 }
+
+// Returns session with user data for authentication checks
+export async function getSession() {
+  const user = await getCurrentUser()
+  if (!user) {
+    return null
+  }
+  return { user }
+}
