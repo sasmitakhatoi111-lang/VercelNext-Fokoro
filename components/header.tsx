@@ -130,7 +130,7 @@ export function Header() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href={`/user/${user.username}`}>
+                    <Link href={`/u/${user.username}`}>
                       <User className="mr-2 h-4 w-4" />
                       Profile
                     </Link>

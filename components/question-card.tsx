@@ -4,18 +4,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn, formatRelativeTime } from '@/lib/utils'
-import type { QuestionWithDetails } from '@/lib/types'
+import type { Question } from '@/lib/types'
 
 interface QuestionCardProps {
-  question: QuestionWithDetails
+  question: Question
   className?: string
-  showTopics?: boolean
+  showTopic?: boolean
 }
 
 export function QuestionCard({
   question,
   className,
-  showTopics = true,
+  showTopic = true,
 }: QuestionCardProps) {
   return (
     <Card
@@ -62,40 +62,32 @@ export function QuestionCard({
 
           {/* Main content */}
           <div className="min-w-0 flex-1">
-            {/* Topic badges */}
-            {showTopics && question.topics && question.topics.length > 0 && (
-              <div className="mb-2 flex flex-wrap gap-1">
-                {question.topics.map((topic) => (
-                  <Link key={topic.id} href={`/topic/${topic.slug}`}>
-                    <Badge
-                      variant="secondary"
-                      className="hover:bg-secondary/80"
-                      style={{
-                        backgroundColor: topic.color ? `${topic.color}15` : undefined,
-                        color: topic.color || undefined,
-                      }}
-                    >
-                      {topic.name}
-                    </Badge>
-                  </Link>
-                ))}
-              </div>
+            {/* Topic badge */}
+            {showTopic && question.topic && (
+              <Link
+                href={`/t/${question.topic.slug}`}
+                className="mb-2 inline-block"
+              >
+                <Badge variant="secondary" className="hover:bg-secondary/80">
+                  {question.topic.name}
+                </Badge>
+              </Link>
             )}
 
             {/* Title */}
             <h3 className="mb-2 line-clamp-2 text-base font-medium leading-snug">
               <Link
-                href={`/question/${question.slug}`}
+                href={`/q/${question.slug}`}
                 className="hover:text-primary transition-colors"
               >
                 {question.title}
               </Link>
             </h3>
 
-            {/* Content preview */}
-            {question.content && (
+            {/* Description preview */}
+            {question.description && (
               <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
-                {question.content}
+                {question.description}
               </p>
             )}
 
@@ -104,7 +96,7 @@ export function QuestionCard({
               {/* Author */}
               {question.author && (
                 <Link
-                  href={`/user/${question.author.username}`}
+                  href={`/u/${question.author.username}`}
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Avatar className="h-5 w-5">

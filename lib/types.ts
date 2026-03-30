@@ -6,8 +6,6 @@ export interface User {
   bio: string | null
   avatar_url: string | null
   reputation: number
-  location: string | null
-  website: string | null
   created_at: string
   updated_at: string
 }
@@ -18,10 +16,8 @@ export interface Topic {
   slug: string
   description: string | null
   icon: string | null
-  color: string | null
   question_count: number
   follower_count: number
-  is_featured: boolean
   created_at: string
 }
 
@@ -29,15 +25,16 @@ export interface Tag {
   id: number
   name: string
   slug: string
-  created_at?: string
+  created_at: string
 }
 
 export interface Question {
   id: number
   title: string
   slug: string
-  content: string
-  author_id: number | null
+  description: string | null
+  user_id: number | null
+  topic_id: number | null
   view_count: number
   answer_count: number
   vote_count: number
@@ -45,45 +42,25 @@ export interface Question {
   accepted_answer_id: number | null
   created_at: string
   updated_at: string
-}
-
-export interface QuestionWithDetails extends Question {
-  author: {
-    id: number
-    username: string
-    display_name: string | null
-    avatar_url: string | null
-    reputation: number
-    bio?: string | null
-  }
-  topics: Array<{
-    id: number
-    name: string
-    slug: string
-    color: string | null
-  }>
-  tags: Tag[]
+  // Joined fields
+  author?: Pick<User, 'id' | 'username' | 'display_name' | 'avatar_url'>
+  topic?: Pick<Topic, 'id' | 'name' | 'slug'>
+  tags?: Tag[]
+  user_vote?: number | null
 }
 
 export interface Answer {
   id: number
   content: string
   question_id: number
-  author_id: number | null
+  user_id: number | null
   vote_count: number
   is_accepted: boolean
   created_at: string
   updated_at: string
-}
-
-export interface AnswerWithDetails extends Answer {
-  author: {
-    id: number
-    username: string
-    display_name: string | null
-    avatar_url: string | null
-    reputation: number
-  }
+  // Joined fields
+  author?: Pick<User, 'id' | 'username' | 'display_name' | 'avatar_url' | 'reputation'>
+  user_vote?: number | null
 }
 
 export interface Vote {
@@ -110,8 +87,14 @@ export interface PaginatedResponse<T> {
   hasMore: boolean
 }
 
+export interface QuestionWithDetails extends Question {
+  author: Pick<User, 'id' | 'username' | 'display_name' | 'avatar_url'>
+  topic: Pick<Topic, 'id' | 'name' | 'slug'>
+  tags: Tag[]
+}
+
 export interface QuestionPageData extends QuestionWithDetails {
-  answers: AnswerWithDetails[]
+  answers: Answer[]
   related_questions: Question[]
 }
 

@@ -79,8 +79,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
+  --font-sans: 'Geist', 'Geist Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-background: var(--background);

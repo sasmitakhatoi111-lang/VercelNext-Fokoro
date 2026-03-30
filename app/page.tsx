@@ -5,26 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { QuestionCard } from '@/components/question-card'
 import { query } from '@/lib/db'
-import type { QuestionWithDetails, Topic } from '@/lib/types'
+import type { Question, Topic } from '@/lib/types'
 
-async function getTrendingQuestions(): Promise<QuestionWithDetails[]> {
+async function getTrendingQuestions(): Promise<Question[]> {
   const result = await query(
     `SELECT 
-      q.id, q.title, q.slug, q.content, q.view_count, q.answer_count, 
-      q.vote_count, q.is_answered, q.created_at, q.updated_at,
-      json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url, 'reputation', u.reputation) as author,
-      COALESCE(
-        json_agg(
-          DISTINCT jsonb_build_object('id', t.id, 'name', t.name, 'slug', t.slug, 'color', t.color)
-        ) FILTER (WHERE t.id IS NOT NULL),
-        '[]'
-      ) as topics,
-      '[]'::json as tags
+      q.id, q.title, q.slug, q.description, q.view_count, q.answer_count, 
+      q.vote_count, q.is_answered, q.created_at,
+      json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url) as author,
+      json_build_object('id', t.id, 'name', t.name, 'slug', t.slug) as topic
     FROM questions q
-    LEFT JOIN users u ON q.author_id = u.id
-    LEFT JOIN question_topics qt ON q.id = qt.question_id
-    LEFT JOIN topics t ON qt.topic_id = t.id
-    GROUP BY q.id, u.id
+    LEFT JOIN users u ON q.user_id = u.id
+    LEFT JOIN topics t ON q.topic_id = t.id
     ORDER BY (q.vote_count * 3 + q.answer_count * 5 + EXTRACT(EPOCH FROM (NOW() - q.created_at)) / -86400) DESC
     LIMIT 5`
   )
@@ -33,32 +25,24 @@ async function getTrendingQuestions(): Promise<QuestionWithDetails[]> {
 
 async function getPopularTopics(): Promise<Topic[]> {
   const result = await query(
-    `SELECT id, name, slug, description, color, question_count, follower_count, is_featured
+    `SELECT id, name, slug, description, question_count, follower_count
     FROM topics
-    ORDER BY follower_count DESC, question_count DESC
+    ORDER BY question_count DESC, follower_count DESC
     LIMIT 8`
   )
   return result.rows
 }
 
-async function getLatestQuestions(): Promise<QuestionWithDetails[]> {
+async function getLatestQuestions(): Promise<Question[]> {
   const result = await query(
     `SELECT 
-      q.id, q.title, q.slug, q.content, q.view_count, q.answer_count, 
-      q.vote_count, q.is_answered, q.created_at, q.updated_at,
-      json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url, 'reputation', u.reputation) as author,
-      COALESCE(
-        json_agg(
-          DISTINCT jsonb_build_object('id', t.id, 'name', t.name, 'slug', t.slug, 'color', t.color)
-        ) FILTER (WHERE t.id IS NOT NULL),
-        '[]'
-      ) as topics,
-      '[]'::json as tags
+      q.id, q.title, q.slug, q.description, q.view_count, q.answer_count, 
+      q.vote_count, q.is_answered, q.created_at,
+      json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url) as author,
+      json_build_object('id', t.id, 'name', t.name, 'slug', t.slug) as topic
     FROM questions q
-    LEFT JOIN users u ON q.author_id = u.id
-    LEFT JOIN question_topics qt ON q.id = qt.question_id
-    LEFT JOIN topics t ON qt.topic_id = t.id
-    GROUP BY q.id, u.id
+    LEFT JOIN users u ON q.user_id = u.id
+    LEFT JOIN topics t ON q.topic_id = t.id
     ORDER BY q.created_at DESC
     LIMIT 5`
   )
@@ -175,7 +159,7 @@ export default async function HomePage() {
               {popularTopics.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {popularTopics.map((topic) => (
-                    <Link key={topic.id} href={`/topic/${topic.slug}`}>
+                    <Link key={topic.id} href={`/t/${topic.slug}`}>
                       <Badge
                         variant="secondary"
                         className="cursor-pointer hover:bg-secondary/80"
