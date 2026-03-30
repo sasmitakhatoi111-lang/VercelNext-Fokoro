@@ -17,6 +17,11 @@ export function QuestionCard({
   className,
   showTopic = true,
 }: QuestionCardProps) {
+  // Support both vote_count and upvotes/downvotes
+  const voteScore = question.vote_count ?? (question.upvotes ?? 0) - (question.downvotes ?? 0)
+  // Support both description and content
+  const preview = question.description || question.content
+
   return (
     <Card
       className={cn(
@@ -31,11 +36,11 @@ export function QuestionCard({
             <div
               className={cn(
                 'flex items-center gap-1.5',
-                question.vote_count > 0 ? 'text-foreground' : 'text-muted-foreground'
+                voteScore > 0 ? 'text-foreground' : 'text-muted-foreground'
               )}
             >
               <ThumbsUp className="h-4 w-4" />
-              <span className="min-w-[2ch]">{question.vote_count}</span>
+              <span className="min-w-[2ch]">{voteScore}</span>
             </div>
             <div
               className={cn(
@@ -65,7 +70,7 @@ export function QuestionCard({
             {/* Topic badge */}
             {showTopic && question.topic && (
               <Link
-                href={`/t/${question.topic.slug}`}
+                href={`/topic/${question.topic.slug}`}
                 className="mb-2 inline-block"
               >
                 <Badge variant="secondary" className="hover:bg-secondary/80">
@@ -77,7 +82,7 @@ export function QuestionCard({
             {/* Title */}
             <h3 className="mb-2 line-clamp-2 text-base font-medium leading-snug">
               <Link
-                href={`/q/${question.slug}`}
+                href={`/question/${question.slug}`}
                 className="hover:text-primary transition-colors"
               >
                 {question.title}
@@ -85,27 +90,27 @@ export function QuestionCard({
             </h3>
 
             {/* Description preview */}
-            {question.description && (
+            {preview && (
               <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
-                {question.description}
+                {preview}
               </p>
             )}
 
             {/* Footer */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               {/* Author */}
-              {question.author && (
+              {question.author && (question.author.display_name || question.author.username) && (
                 <Link
-                  href={`/u/${question.author.username}`}
+                  href={`/user/${question.author.username}`}
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Avatar className="h-5 w-5">
                     <AvatarImage
                       src={question.author.avatar_url || undefined}
-                      alt={question.author.display_name || question.author.username}
+                      alt={question.author.display_name || question.author.username || 'User'}
                     />
                     <AvatarFallback className="text-[10px]">
-                      {(question.author.display_name || question.author.username)
+                      {(question.author.display_name || question.author.username || 'U')
                         .charAt(0)
                         .toUpperCase()}
                     </AvatarFallback>
@@ -125,7 +130,7 @@ export function QuestionCard({
               <div className="flex items-center gap-3 text-xs text-muted-foreground sm:hidden">
                 <span className="flex items-center gap-1">
                   <ThumbsUp className="h-3.5 w-3.5" />
-                  {question.vote_count}
+                  {voteScore}
                 </span>
                 <span className="flex items-center gap-1">
                   <MessageSquare className="h-3.5 w-3.5" />

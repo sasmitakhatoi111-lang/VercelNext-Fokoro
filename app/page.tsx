@@ -159,7 +159,7 @@ export default async function HomePage() {
               {popularTopics.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {popularTopics.map((topic) => (
-                    <Link key={topic.id} href={`/t/${topic.slug}`}>
+                    <Link key={topic.id} href={`/topic/${topic.slug}`}>
                       <Badge
                         variant="secondary"
                         className="cursor-pointer hover:bg-secondary/80"

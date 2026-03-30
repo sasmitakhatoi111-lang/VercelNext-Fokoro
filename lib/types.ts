@@ -32,16 +32,20 @@ export interface Question {
   id: number
   title: string
   slug: string
-  description: string | null
-  user_id: number | null
+  content?: string | null
+  description?: string | null
+  user_id?: number | null
+  author_id?: number | null
   topic_id: number | null
   view_count: number
   answer_count: number
-  vote_count: number
+  vote_count?: number
+  upvotes?: number
+  downvotes?: number
   is_answered: boolean
-  accepted_answer_id: number | null
+  accepted_answer_id?: number | null
   created_at: string
-  updated_at: string
+  updated_at?: string
   // Joined fields
   author?: Pick<User, 'id' | 'username' | 'display_name' | 'avatar_url'>
   topic?: Pick<Topic, 'id' | 'name' | 'slug'>
