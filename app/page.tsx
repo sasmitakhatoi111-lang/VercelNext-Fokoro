@@ -8,45 +8,60 @@ import { query } from '@/lib/db'
 import type { Question, Topic } from '@/lib/types'
 
 async function getTrendingQuestions(): Promise<Question[]> {
-  const result = await query(
-    `SELECT 
-      q.id, q.title, q.slug, q.description, q.view_count, q.answer_count, 
-      q.vote_count, q.is_answered, q.created_at,
-      json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url) as author,
-      json_build_object('id', t.id, 'name', t.name, 'slug', t.slug) as topic
-    FROM questions q
-    LEFT JOIN users u ON q.user_id = u.id
-    LEFT JOIN topics t ON q.topic_id = t.id
-    ORDER BY (q.vote_count * 3 + q.answer_count * 5 + EXTRACT(EPOCH FROM (NOW() - q.created_at)) / -86400) DESC
-    LIMIT 5`
-  )
-  return result.rows
+  try {
+    const result = await query(
+      `SELECT 
+        q.id, q.title, q.slug, q.description, q.view_count, q.answer_count, 
+        q.vote_count, q.is_answered, q.created_at,
+        json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url) as author,
+        json_build_object('id', t.id, 'name', t.name, 'slug', t.slug) as topic
+      FROM questions q
+      LEFT JOIN users u ON q.user_id = u.id
+      LEFT JOIN topics t ON q.topic_id = t.id
+      ORDER BY (q.vote_count * 3 + q.answer_count * 5 + EXTRACT(EPOCH FROM (NOW() - q.created_at)) / -86400) DESC
+      LIMIT 5`
+    )
+    return result.rows
+  } catch (error) {
+    console.error('Error fetching trending questions:', error)
+    return []
+  }
 }
 
 async function getPopularTopics(): Promise<Topic[]> {
-  const result = await query(
-    `SELECT id, name, slug, description, question_count, follower_count
-    FROM topics
-    ORDER BY question_count DESC, follower_count DESC
-    LIMIT 8`
-  )
-  return result.rows
+  try {
+    const result = await query(
+      `SELECT id, name, slug, description, question_count, follower_count
+      FROM topics
+      ORDER BY question_count DESC, follower_count DESC
+      LIMIT 8`
+    )
+    return result.rows
+  } catch (error) {
+    console.error('Error fetching popular topics:', error)
+    return []
+  }
 }
 
 async function getLatestQuestions(): Promise<Question[]> {
-  const result = await query(
-    `SELECT 
-      q.id, q.title, q.slug, q.description, q.view_count, q.answer_count, 
-      q.vote_count, q.is_answered, q.created_at,
-      json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url) as author,
-      json_build_object('id', t.id, 'name', t.name, 'slug', t.slug) as topic
-    FROM questions q
-    LEFT JOIN users u ON q.user_id = u.id
-    LEFT JOIN topics t ON q.topic_id = t.id
-    ORDER BY q.created_at DESC
-    LIMIT 5`
-  )
-  return result.rows
+  try {
+    const result = await query(
+      `SELECT 
+        q.id, q.title, q.slug, q.description, q.view_count, q.answer_count, 
+        q.vote_count, q.is_answered, q.created_at,
+        json_build_object('id', u.id, 'username', u.username, 'display_name', u.display_name, 'avatar_url', u.avatar_url) as author,
+        json_build_object('id', t.id, 'name', t.name, 'slug', t.slug) as topic
+      FROM questions q
+      LEFT JOIN users u ON q.user_id = u.id
+      LEFT JOIN topics t ON q.topic_id = t.id
+      ORDER BY q.created_at DESC
+      LIMIT 5`
+    )
+    return result.rows
+  } catch (error) {
+    console.error('Error fetching latest questions:', error)
+    return []
+  }
 }
 
 export default async function HomePage() {
